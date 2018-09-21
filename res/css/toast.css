@@ -1,0 +1,44 @@
+#toast-container{
+  position: fixed;
+  right: 13px;
+  bottom: 9px;
+  min-width: 300px;
+  transition: 0.2s;
+}
+
+.bar{
+  display: block;
+  margin: 3px;
+  border-radius: 3px;
+  border:none;
+  outline:none;
+  padding: 10px 20px 10px 20px;
+  background-color: #282828;
+  color: white;
+  width: 95%;
+  font-size: 15px;
+  opacity: 0;
+  transform: translate(100%);
+  animation: toast-in 0.2s forwards,toast-out 0.2s 2s forwards;
+  cursor: pointer;
+}
+
+@keyframes toast-in {
+  from{
+    transform:translate(100%);
+    opacity: 0;
+  }
+  to{
+    opacity: 1;
+    transform:translate(0%);
+  }
+}
+@keyframes toast-out {
+  from{
+    opacity: 1;
+    transform:translate(0%);
+  }
+  to{
+    transform:translate(100%);
+  }
+}

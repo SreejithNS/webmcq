@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Teacher Control Panel</title>
+	<link rel="stylesheet" type="text/css" href="/teacher/css">
+	<script type="text/javascript" src ="/socket.io/socket.io.js"></script>
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+	<script type="text/javascript" src="/tjs"></script>
+	<link rel="stylesheet" type="text/css" href="/tcss">
+</head>
+<body>
+	<div class="left">
+		<div class="logo"></div>
+		<div class="tab" id="page-online" onclick="toggle(this.id)"><div class="left-dot">►</div>Control Center</div>
+		<div class="tab" id="page-reports" onclick="toggle(this.id)"><div class="left-dot">►</div>Report</div>
+		<div class="tab" id="page-questions" onclick="toggle(this.id);socket.emit('questions_pull')"><div class="left-dot">►</div>Questions</div>
+
+	</div>
+	
+	<div class="right">
+		<div class="top">
+		<div class="top-options" onclick="document.getElementById('settings-modal').style.display = 'inline-block'"><svg x="0px" y="0px" viewBox="0 0 408 408"  xml:space="preserve" class="">
+		<path d="M38.86 25.95c.08-.64.14-1.29.14-1.95s-.06-1.31-.14-1.95l4.23-3.31c.38-.3.49-.84.24-1.28l-4-6.93c-.25-.43-.77-.61-1.22-.43l-4.98 2.01c-1.03-.79-2.16-1.46-3.38-1.97L29 4.84c-.09-.47-.5-.84-1-.84h-8c-.5 0-.91.37-.99.84l-.75 5.3c-1.22.51-2.35 1.17-3.38 1.97L9.9 10.1c-.45-.17-.97 0-1.22.43l-4 6.93c-.25.43-.14.97.24 1.28l4.22 3.31C9.06 22.69 9 23.34 9 24s.06 1.31.14 1.95l-4.22 3.31c-.38.3-.49.84-.24 1.28l4 6.93c.25.43.77.61 1.22.43l4.98-2.01c1.03.79 2.16 1.46 3.38 1.97l.75 5.3c.08.47.49.84.99.84h8c.5 0 .91-.37.99-.84l.75-5.3c1.22-.51 2.35-1.17 3.38-1.97l4.98 2.01c.45.17.97 0 1.22-.43l4-6.93c.25-.43.14-.97-.24-1.28l-4.22-3.31zM24 31c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+		</svg></div>
+	</div>
+		<div class="page" id="online">
+		<div class="page-title"><label class="online-table-label"><div class="dot"></div>LOGGED STUDENTS</label></div>
+			<br>
+			<div class="online-control-panel">
+				<div class="control-panel-label">Action</div>
+				<input type="button" id="start-but" class="but ripple-effect" value="START">
+			</div>
+			<br>
+			<table class="online-table"><td class="temp-tr">Content yet to be recieved.</td></table>
+		</div>
+		<div class="page" id="reports">
+			<div class="page-title">
+				<label class="online-table-label">Students Report</label>
+			</div><br>
+			<div class="online-control-panel">
+				<div class="control-panel-label">Control Panel</div>
+				<input type="button" id="reload-but" class="but ripple-effect" value="RELOAD" onclick="rep_cc()">
+			</div>
+			<br>
+			<table class="report-table"><td class="temp-tr">Content yet to be recieved.</td></table>
+		</div>
+		<div class="page" id="questions">
+			<div class="page-title">
+				<label class="online-table-label">Questions</label>
+			</div><br>
+
+			<div class="online-control-panel">
+				<div class="control-panel-label">Actions</div>
+				<input type="button" class="but ripple-effect" value="INSERT" onclick="insertQuestion()">
+			</div>
+			<div class="black-box pink">Question Paper:<span class="yellow">12sqset1</span></div>
+			
+			<table class="questions-table">
+				<tr>
+					<th><i>Data yet to be recieved</i></th>
+
+				</tr>
+			</table><br>
+		</div>
+		
+	</div>
+	<div class="modal" id="settings-modal" style="display: none;">
+			<div class="modal-content">
+				<div class="content">
+				<div class="title">Settings</div><br>
+				<div class="grp">Question Paper Code:
+					<input type="text" class="input" id="settings-qset">
+				</div><br>
+
+				<div class="grp align-right top-mg16">
+					<input type="button" class="but ripple-effect settings-but" value="Close" onclick="document.getElementById('settings-modal').style.display = 'none';loadSettings()" >
+					<input type="button" class="but ripple-effect settings-but" value="Reset" onclick="loadSettings()">
+					<input type="button" class="but ripple-effect settings-but" value="Save" onclick="saveSettings()">
+				</div>
+			</div>
+			</div>
+	</div>
+	<div class="modal" id="insert-question" style="display: none;">
+				<div class="modal-content" style="min-width: 30%;">
+					<div class="title">Insert a question</div><br>
+					<div class="grp">
+					Type in your Question<br>
+					<textarea id="insert-question-text" class="input mg16"></textarea></div><br>
+					<div class="grp">
+					Enter the Choices<br>
+					► 1<input type="text" id="opt-1" class="input mg16 left-mg16"><br>
+					► 2<input type="text" id="opt-2" class="input mg16 left-mg16"><br>
+					► 3<input type="text" id="opt-3" class="input mg16 left-mg16"><br>
+					► 4<input type="text" id="opt-4" class="input mg16 left-mg16"></div><br>
+					<div class="grp">
+					Select the correct answer:
+					<select id="right-opt">
+					  <option value="none" selected>Right Answer</option>
+					  <option value="1">1</option>
+					  <option value="2">2</option>
+					  <option value="3">3</option>
+					  <option value="4">4</option>
+					</select></div><br>
+					<div class="grp align-right">
+					<input type="button" class="but ripple-effect" value="Close" onclick="insertQuestion()">
+					<input type="button" class="but ripple-effect" value="Insert" onclick="insert()">
+					</div>
+				</div>
+			</div>
+
+			<div class="modal" id="edit-question" style="display: none;">
+				<div class="modal-content" style="min-width: 30%;">
+					<div class="title">Edit Question - <b><i id="edit-question-no"></i></b></div><br>
+					<div class="grp">
+					Question<br>
+					<textarea id="edit-question-text" class="input mg16"></textarea></div><br>
+					<div class="grp">
+					Choices<br>
+					► 1<input type="text" id="edit-opt-1" class="input mg16 left-mg16"><br>
+					► 2<input type="text" id="edit-opt-2" class="input mg16 left-mg16"><br>
+					► 3<input type="text" id="edit-opt-3" class="input mg16 left-mg16"><br>
+					► 4<input type="text" id="edit-opt-4" class="input mg16 left-mg16"></div><br>
+					<div class="grp">
+					Correct answer:
+					<select id="edit-right-opt">
+					  <option value="none" selected>Right Answer</option>
+					  <option value="1">1</option>
+					  <option value="2">2</option>
+					  <option value="3">3</option>
+					  <option value="4">4</option>
+					</select></div><br>
+					<div class="grp align-right">
+					<input type="button" class="but ripple-effect" value="Close" onclick="editQuestion()">
+					<input type="button" class="but ripple-effect" value="Change" onclick="edit()">
+					</div>
+				</div>
+			</div>
+	<div id="toast-container"></div>
+</body>
+
+<script type="text/javascript">
+	var socket = io('/teacher');
+	var qset;
+	if(localStorage.getItem('qset') === null){
+		var temp = prompt("Enter the qset");
+		qset = temp;
+		socket.emit('qset',temp);
+		localStorage.setItem('qset',temp);
+		console.log("Not set "+temp);
+		loadSettings();
+	}else{
+		var temp = localStorage.getItem('qset');
+		qset = temp;
+		console.log("set "+qset);
+		socket.emit('qset',temp);
+		loadSettings();
+	}
+	function toggle(id){
+		var tabs = document.querySelectorAll(".tab");
+
+		tabs.forEach((tab)=>{
+			var name = tab.id.split('');
+				name.splice(0,5);
+				name = name.join('');
+
+			if(tab.id == id){
+				tab.style.backgroundColor = "#222f3e";
+				tab.style.color = "white";
+				document.querySelectorAll('.page').forEach((page)=>{
+				if(page.id !== name){
+
+					page.style.display = "none";
+				}else{
+					page.style.display = "inline-block";
+				}
+				});
+			}else{	
+				tab.style.color = "black";
+				tab.style.backgroundColor = "transparent";			
+			}
+		});
+	}
+
+	toggle("page-online");
+
+	document.querySelector('#start-but').onclick = ()=>{
+		socket.emit('start');
+	};
+
+	function rep_cc(){
+		socket.emit('rep_cc');
+	}
+
+	var insertQuestionModal = false;
+	
+
+	function loadSettings(){
+		document.getElementById('settings-qset').value = qset;
+	}
+
+	function saveSettings(){
+		var code = document.getElementById('settings-qset').value;
+		qset = code;
+
+		localStorage.setItem('qset',code);
+		socket.emit('qset',code);
+		document.getElementById('settings-modal').style.display = 'none';
+		socket.emit("questions_pull");
+	}
+
+
+
+	function insertQuestion(){
+		document.getElementById("insert-question-text").value = "";
+		document.getElementById("opt-1").value = "";
+		document.getElementById("opt-2").value = "";
+		document.getElementById("opt-3").value = "";
+		document.getElementById("opt-4").value = "";
+		document.getElementById("right-opt").selectedIndex  = 0;
+		if(!insertQuestionModal){
+		document.querySelector("#insert-question").style.display = "inline-block";
+		insertQuestionModal = true;
+		}else{
+			document.querySelector("#insert-question").style.display = "none";
+			insertQuestionModal = false;
+		}
+	}
+	var editQuestionModal = false;
+
+	function editQuestion(id){
+		var q = {};
+		questions.forEach((question)=>{
+			if(question.qno == id){
+			 	q = question;
+			}
+		});
+		document.getElementById("edit-question-no").innerHTML = id;
+		document.getElementById("edit-question-text").value = q.quest;
+		document.getElementById("edit-opt-1").value = q.opt1;
+		document.getElementById("edit-opt-2").value = q.opt2;
+		document.getElementById("edit-opt-3").value = q.opt3;
+		document.getElementById("edit-opt-4").value = q.opt4;
+		document.getElementById("edit-right-opt").selectedIndex  = q.ans;
+		if(!editQuestionModal){
+		document.querySelector("#edit-question").style.display = "inline-block";
+		editQuestionModal = true;
+		}else{
+			document.querySelector("#edit-question").style.display = "none";
+			editQuestionModal = false;
+		}
+	}
+	function edit(){
+		let qno = parseInt(document.getElementById("edit-question-no").innerHTML);
+		let quest = document.getElementById("edit-question-text").value;
+		let opt1 = document.getElementById("edit-opt-1").value;
+		let opt2 = document.getElementById("edit-opt-2").value;
+		let opt3 = document.getElementById("edit-opt-3").value;
+		let opt4 = document.getElementById("edit-opt-4").value;
+		let ans = document.getElementById("edit-right-opt").selectedIndex;
+
+		var data = {
+			qno : qno,
+			quest : quest,
+			opt1 : opt1,
+			opt2 : opt2,
+			opt3 : opt3,
+			opt4 : opt4,
+			ans : ans
+		}
+
+		let send_data = JSON.stringify(data);
+
+		socket.emit('edit_questions',send_data);
+
+		if(!editQuestionModal){
+		document.querySelector("#edit-question").style.display = "inline-block";
+		editQuestionModal = true;
+		}else{
+			document.querySelector("#edit-question").style.display = "none";
+			editQuestionModal = false;
+		}
+	}
+
+	function insert(){
+		var question = document.getElementById("insert-question-text").value;
+		var opt1 = document.getElementById("opt-1").value;
+		var opt2 = document.getElementById("opt-2").value;
+		var opt3 = document.getElementById("opt-3").value;
+		var opt4 = document.getElementById("opt-4").value;
+		var ans = document.getElementById("right-opt").selectedIndex;
+		if(ans == 0){
+			return alert('Please Select the Right answer!')
+		}
+
+		var data = {
+			quest : question,
+			opt1 : opt1,
+			opt2 : opt2,
+			opt3 : opt3,
+			opt4 : opt4,
+			ans : ans
+		}
+
+		let send_data = JSON.stringify(data);
+
+		socket.emit('insert_questions',send_data);
+		insertQuestion();
+		document.getElementById("insert-question-text").value = "";
+		document.getElementById("opt-1").value = "";
+		document.getElementById("opt-2").value = "";
+		document.getElementById("opt-3").value = "";
+		document.getElementById("opt-4").value = "";
+		document.getElementById("right-opt").selectedIndex  = 0;
+	}
+	var questions;
+	socket.on('questions_data',(rdata)=>{
+
+		toast("Questions Data Reloaded");
+		var data = JSON.parse(rdata);
+		questions = data;
+		console.log("Reports data received from server : ", data);
+
+		var present = document.querySelector(".questions-table");
+		if(present !== null) present.parentNode.removeChild(present);
+
+		var tab = document.createElement('table');
+		tab.className = "questions-table";
+
+		var tr = document.createElement('tr');
+		var th1 = document.createElement('th');
+		var th2 = document.createElement('th');
+		var th3 = document.createElement('th');
+		var th4 = document.createElement('th');
+		var th5 = document.createElement('th');
+		var th6 = document.createElement('th');
+		var th7 = document.createElement('th');
+
+		th1.innerHTML = "Qst No.";
+		tr.appendChild(th1);
+		th2.innerHTML = "Question";
+		tr.appendChild(th2);
+		th3.innerHTML = "Option 1";
+		tr.appendChild(th3);
+		th4.innerHTML = "Option 2";
+		tr.appendChild(th4);
+		th5.innerHTML = "Option 3";
+		tr.appendChild(th5);
+		th6.innerHTML = "Option 4";
+		tr.appendChild(th6);
+		th7.innerHTML = "Answer";
+		tr.appendChild(th7);
+
+		tab.append(tr);
+		var i=0;
+		data.forEach((da)=>{
+			var tr = document.createElement('tr');
+			i++;
+			for(var d in da){
+				var td = document.createElement('td');
+				if(d == "qno"){
+				td.innerHTML = i;
+				td.id = "qno"+da[d];
+				td.className = "qno"
+				var no = parseInt(da[d]);
+				td.addEventListener("contextmenu", (e)=>{e.preventDefault();editQuestion(no)});
+				tr.append(td);
+				}else{
+				td.innerHTML = da[d];
+				tr.append(td);
+				}
+			};
+			tab.append(tr);
+		});
+		document.querySelector('#questions').append(tab);
+		document.querySelectorAll('.questions-table tr').forEach((tr)=>{
+			if(tr.innerHTML == "" || tr.innerHTML == null){
+				console.log(tr);
+				tr.remove();
+			}
+		});
+	});
+
+	socket.on('report_data',function(rdata){
+		toast('Reports Updated');
+		let data = JSON.parse(rdata);
+		console.log("Reports data received from server : ", data);
+
+		var present = document.querySelector(".report-table");
+		if(present !== null) present.parentNode.removeChild(present); 
+
+		var tab = document.createElement('table');
+		tab.className = "report-table";
+
+		var tr = document.createElement('tr');
+		var th1 = document.createElement('th');
+		var th2 = document.createElement('th');
+		var th3 = document.createElement('th');
+		var th4 = document.createElement('th');
+		var th5 = document.createElement('th');
+		var th6 = document.createElement('th');
+
+		th1.innerHTML = "Roll No.";
+		tr.appendChild(th1);
+		th2.innerHTML = "Name";
+		tr.appendChild(th2);
+		th3.innerHTML = "System";
+		tr.appendChild(th3);
+		th4.innerHTML = "Mistakn Questions";
+		tr.appendChild(th4);
+		th5.innerHTML = "Total Mistakes";
+		tr.appendChild(th5);
+		th6.innerHTML = "Scored Marks";
+		tr.appendChild(th6);
+
+		tab.append(tr);
+
+		data.forEach((da)=>{
+			var tr = document.createElement('tr');
+			for(var d in da){
+				var td = document.createElement('td');
+				td.innerHTML = da[d];
+				tr.append(td);
+			};
+			tab.append(tr);
+		});
+		document.querySelector('#reports').append(tab);
+		document.querySelectorAll('.report-table tr').forEach((tr)=>{
+			if(tr.innerHTML == "" || tr.innerHTML == null){
+				console.log(tr);
+				tr.remove();
+			}
+		});
+
+	});
+
+	socket.on('logged',(logdata)=>{
+		toast('New Student logged');
+		var present = document.querySelector(".online-table");
+		if(present !== null) present.parentNode.removeChild(present); 
+		
+		var tab = document.createElement('table');
+		tab.className = "online-table";
+		var tr = document.createElement('tr');
+		var th1 = document.createElement('th');
+		var th2 = document.createElement('th');
+		var th3 = document.createElement('th');
+		th1.innerHTML = "System"
+		tr.append(th1);
+		th2.innerHTML = "Name";
+		tr.append(th2);
+		th3.innerHTML = "Roll No.";
+		tr.append(th3);
+		tab.append(tr);
+
+		logdata.forEach((id)=>{
+			if(id !== {}) {
+			var tr = document.createElement('tr');
+				for (var d in id){
+				var td = document.createElement('td');
+				td.innerHTML = id[d];
+				tr.append(td);
+				};
+			tab.append(tr);
+			};
+			
+		});
+		document.querySelector('#online').append(tab);
+		document.querySelectorAll('.online-table tr').forEach((tr)=>{
+			if(tr.innerHTML == "" || tr.innerHTML == null){
+				console.log(tr);
+				tr.remove();
+			}
+		});
+		
+	});
+
+
+
+
+</script>
+</html>

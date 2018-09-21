@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>WebMCQ</title>
+	<link rel="stylesheet" type="text/css" href="/css">
+	<script type="text/javascript" src = "/socket.io/socket.io.js"></script>
+	<link href="https://fonts.googleapis.com/css?family=Roboto:500,900" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+
+</head>
+
+<body>
+	<div class="page show" id="page-home">
+		<div class="box sh1">
+			<div class="form">
+				<form action="/login" id="login-form">
+					<div class="inp-grp tit">
+						<div class="tit-div">WebMCQ</div>
+						<div class="tit-span">EXAMS MADE EASY</div>
+					</div>
+					<div class="inp-grp">
+						<input class="inp" type="text" autocomplete="off" placeholder="Your name" id="name">
+					</div><br>
+					<div class="inp-grp">
+						<input class="inp" type="number" placeholder="Roll Number" id="roll">
+					</div><br>
+					<div class="inp-grp">
+						<input type="submit" id="login-submit" value="Login" class="but ripple-effect .ripple-green">
+					</div>
+				</form>
+			</div>
+		</div>			
+	</div>
+	<div class="page hide" id="page-questions">
+		<div class="q-box sh1" id="frame">
+			<div class="q-paper">
+				<div class="q-group">
+					<div class="q">What is "this is a question"?</div>
+				</div><br>
+				<div class="opt-group">
+					<div class="opt"><input type="radio" id="1" name="options"><label class="opt-label">Option 1</label></div><br>
+					<div class="opt"><input type="radio" id="2" name="options"><label class="opt-label">Option 2</label></div><br>
+					<div class="opt"><input type="radio" id="3" name="options"><label class="opt-label">Option 3</label></div><br>
+					<div class="opt"><input type="radio" id="4" name="options"><label class="opt-label">Option 4</label></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+
+<script type="text/javascript">
+	var homepage =  document.getElementById('page-home').classList;
+	var questionspage = document.getElementById('page-questions').classList;
+	var socket = io();
+	function sysno(){
+		if(localStorage.getItem('sys') !== null ) {
+			return localStorage.getItem('sys')
+		} else {
+			var s = prompt("Enter the System Number:");
+			localStorage.setItem('sys',s);
+			return s
+		}
+	}
+	var sys = sysno();
+	var nam,roll;
+	var report = {};
+
+	document.getElementById('login-form').onsubmit = function(e){
+		e.preventDefault();
+		nam = document.getElementById('name').value;
+		roll = document.getElementById('roll').value;
+
+		if(name.value !== "" || roll.value !== "") {
+			var data = {
+				nam : nam.toUpperCase(),
+				roll : roll,
+				sys : sys
+			}
+
+			socket.emit('login',data);
+
+			socket.on('trigger',(logdata)=>{
+				homepage.remove('show');
+				questionspage.remove('hide');
+				homepage.add('hide');
+				questionspage.add('show');
+				report.raw = logdata;
+				loadQues(report.raw);
+			});
+		}
+	}
+
+	var i=0;
+
+	report.generate = function(){
+		var f = report.raw;
+		var totmark = 0;
+		var wqno = [];
+		f.forEach((i)=>{
+			if(parseInt(i.chosen) == parseInt(i.ans)) {
+				i.mark = 1;
+				totmark += i.mark;
+			}else{
+				i.mark = 0;
+				totmark += i.mark;
+				wqno.push(i.qno);
+			}
+		})
+		f["report"] = {
+			sys : sys,
+			roll : roll,
+			nam : nam,
+			mistake : wqno,
+			totmistake : wqno.length,
+			total : totmark
+		}
+
+		socket.emit('report',f["report"]);
+
+		return f;
+	}
+	
+	var loadQues = function(data){
+		var present = document.querySelector(".q-paper");
+		if(present !== null) present.parentNode.removeChild(present); 
+
+		if(i == (data.length)) {
+			console.log(report.generate());
+			return console.log("Questions limit reached")
+		}
+
+		var json = data[i];
+
+
+		var q_paper    = document.createElement('div');
+		var q_group    = document.createElement('div');
+		var q          = document.createElement('div');
+		var opt_group  = document.createElement('div');
+		var opt1        = document.createElement('div');
+		var opt2        = document.createElement('div');
+		var opt3        = document.createElement('div');
+		var opt4        = document.createElement('div');
+		var input1     = document.createElement('input');
+		var opt_label1 = document.createElement('label');
+		var input2     = document.createElement('input');
+		var opt_label2 = document.createElement('label');
+		var input3     = document.createElement('input');
+		var opt_label3 = document.createElement('label');
+		var input4     = document.createElement('input');
+		var opt_label4 = document.createElement('label');
+
+		q_paper.className = "q-paper";
+		q_group.className = "q-group";
+		q.className = "q";
+		q.innerHTML = json.quest;
+		q_group.append(q);
+
+		opt_group.className = "opt-group";
+
+		input1.name = "options";
+		input1.id = "1";
+		input1.type = "radio";
+		opt_label1.className = "opt-label1";
+		opt_label1.innerHTML = json.opt1;
+
+		opt1.className = "opt";
+		opt1.append(input1);
+		opt1.append(opt_label1);
+		
+		input2.name = "options";
+		input2.id = "2";
+		input2.type = "radio";
+		opt_label2.className = "opt-label2";
+		opt_label2.innerHTML = json.opt2;
+
+		opt2.className = "opt";
+		opt2.append(input2);
+		opt2.append(opt_label2);
+
+		input3.name = "options";
+		input3.id = "3";
+		input3.type = "radio";
+		opt_label3.className = "opt-label3";
+		opt_label3.innerHTML = json.opt3;
+
+		opt3.className = "opt";
+		opt3.append(input3);
+		opt3.append(opt_label3);
+
+		input4.name = "options";
+		input4.id = "4";
+		input4.type = "radio";
+		opt_label4.className = "opt-label4";
+		opt_label4.innerHTML = json.opt4;
+
+		opt4.className = "opt";
+		opt4.append(input4);
+		opt4.append(opt_label4);
+
+
+		opt_group.append(opt1);
+		opt_group.append(opt2);
+		opt_group.append(opt3);
+		opt_group.append(opt4);
+
+		q_paper.append(q_group);
+		q_paper.append(opt_group);
+
+		var qbox = document.querySelector("#frame");
+		qbox.append(q_paper);
+
+		document.querySelectorAll('input[name="options"]').forEach((elem)=>{
+			elem.addEventListener('click',()=>{
+				json.chosen = parseInt(document.querySelector('input[name="options"]:checked').id);
+				i++;
+				loadQues(report.raw);
+			});
+		});
+	}
+
+	//document.querySelector('input[name="rate"]:checked').value;
+
+</script>
+
+</html>

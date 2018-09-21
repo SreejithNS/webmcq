@@ -1,0 +1,19 @@
+{
+  "name": "webmcq",
+  "version": "1.0.0",
+  "description": "Web based MCQ test for schools.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index"
+  },
+  "author": "Sreejith N",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.3",
+    "mongodb": "^3.1.3",
+    "socket.io": "^2.1.1",
+    "sqlite3": "^4.0.2"
+  }
+}
