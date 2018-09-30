@@ -44,7 +44,17 @@ div{
 	min-width: 40%;
 	min-height: 60%;
 }
+@media only screen and (min-width: 300px) {
+	.box{
+		min-width: 100%;
+		min-height: 80%;
+	}
+	.q-box{
+		min-width: 100%;
+		min-height: 80%;
+	}
 
+}
 .tit-div{
 	color: #F50057;
 	font-size: 55px;

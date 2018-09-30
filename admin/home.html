@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html>
 <head>
 	<title>Teacher Control Panel</title>
@@ -8,10 +8,12 @@
 	<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
 	<script type="text/javascript" src="/tjs"></script>
 	<link rel="stylesheet" type="text/css" href="/tcss">
+	<link rel="icon" href="/favicon.ico">
+	
 </head>
 <body>
 	<div class="left">
-		<div class="logo"></div>
+		<div class="logo"><img class="logo-img" src="/favicon.ico"><label class="logo-label">Web MCQ</label></div>
 		<div class="tab" id="page-online" onclick="toggle(this.id)"><div class="left-dot">►</div>Control Center</div>
 		<div class="tab" id="page-reports" onclick="toggle(this.id)"><div class="left-dot">►</div>Report</div>
 		<div class="tab" id="page-questions" onclick="toggle(this.id);socket.emit('questions_pull')"><div class="left-dot">►</div>Questions</div>
@@ -20,12 +22,13 @@
 	
 	<div class="right">
 		<div class="top">
+		<div id="page-title"></div>
 		<div class="top-options" onclick="document.getElementById('settings-modal').style.display = 'inline-block'"><svg x="0px" y="0px" viewBox="0 0 408 408"  xml:space="preserve" class="">
 		<path d="M38.86 25.95c.08-.64.14-1.29.14-1.95s-.06-1.31-.14-1.95l4.23-3.31c.38-.3.49-.84.24-1.28l-4-6.93c-.25-.43-.77-.61-1.22-.43l-4.98 2.01c-1.03-.79-2.16-1.46-3.38-1.97L29 4.84c-.09-.47-.5-.84-1-.84h-8c-.5 0-.91.37-.99.84l-.75 5.3c-1.22.51-2.35 1.17-3.38 1.97L9.9 10.1c-.45-.17-.97 0-1.22.43l-4 6.93c-.25.43-.14.97.24 1.28l4.22 3.31C9.06 22.69 9 23.34 9 24s.06 1.31.14 1.95l-4.22 3.31c-.38.3-.49.84-.24 1.28l4 6.93c.25.43.77.61 1.22.43l4.98-2.01c1.03.79 2.16 1.46 3.38 1.97l.75 5.3c.08.47.49.84.99.84h8c.5 0 .91-.37.99-.84l.75-5.3c1.22-.51 2.35-1.17 3.38-1.97l4.98 2.01c.45.17.97 0 1.22-.43l4-6.93c.25-.43.14-.97-.24-1.28l-4.22-3.31zM24 31c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
 		</svg></div>
 	</div>
 		<div class="page" id="online">
-		<div class="page-title"><label class="online-table-label"><div class="dot"></div>LOGGED STUDENTS</label></div>
+		<!---div class="page-title"><label class="online-table-label"><div class="dot"></div>LOGGED STUDENTS</label></div-->
 			<br>
 			<div class="online-control-panel">
 				<div class="control-panel-label">Action</div>
@@ -35,9 +38,9 @@
 			<table class="online-table"><td class="temp-tr">Content yet to be recieved.</td></table>
 		</div>
 		<div class="page" id="reports">
-			<div class="page-title">
+			<!---div class="page-title">
 				<label class="online-table-label">Students Report</label>
-			</div><br>
+			</div--><br>
 			<div class="online-control-panel">
 				<div class="control-panel-label">Control Panel</div>
 				<input type="button" id="reload-but" class="but ripple-effect" value="RELOAD" onclick="rep_cc()">
@@ -46,15 +49,20 @@
 			<table class="report-table"><td class="temp-tr">Content yet to be recieved.</td></table>
 		</div>
 		<div class="page" id="questions">
-			<div class="page-title">
+			<!--div class="page-title">
 				<label class="online-table-label">Questions</label>
-			</div><br>
-
+			</div--><br>
+			<div class="black-box mild-grey">
+				<div>
+					Question Paper:<span class="matte-black i b" id="questions-id">12sqset1</span>
+					Author:<span class="matte-black i b" id="questions-author">Sreejith N</span>
+				</div>
+					
+			</div>
 			<div class="online-control-panel">
 				<div class="control-panel-label">Actions</div>
 				<input type="button" class="but ripple-effect" value="INSERT" onclick="insertQuestion()">
 			</div>
-			<div class="black-box pink">Question Paper:<span class="yellow">12sqset1</span></div>
 			
 			<table class="questions-table">
 				<tr>
@@ -79,8 +87,7 @@
 					<input type="button" class="but ripple-effect settings-but" value="Save" onclick="saveSettings()">
 				</div>
 			</div>
-			</div>
-	</div>
+			</div></div>
 	<div class="modal" id="insert-question" style="display: none;">
 				<div class="modal-content" style="min-width: 30%;">
 					<div class="title">Insert a question</div><br>
@@ -106,10 +113,8 @@
 					<input type="button" class="but ripple-effect" value="Close" onclick="insertQuestion()">
 					<input type="button" class="but ripple-effect" value="Insert" onclick="insert()">
 					</div>
-				</div>
-			</div>
-
-			<div class="modal" id="edit-question" style="display: none;">
+				</div></div>
+	<div class="modal" id="edit-question" style="display: none;">
 				<div class="modal-content" style="min-width: 30%;">
 					<div class="title">Edit Question - <b><i id="edit-question-no"></i></b></div><br>
 					<div class="grp">
@@ -135,11 +140,9 @@
 					<input type="button" class="but ripple-effect" value="Change" onclick="edit()">
 					</div>
 				</div>
-			</div>
+	</div>
 	<div id="toast-container"></div>
-</body>
-
-<script type="text/javascript">
+	<script type="text/javascript">
 	var socket = io('/teacher');
 	var qset;
 	if(localStorage.getItem('qset') === null){
@@ -165,18 +168,20 @@
 				name = name.join('');
 
 			if(tab.id == id){
-				tab.style.backgroundColor = "#222f3e";
+				tab.style.backgroundColor = "#34495e";
 				tab.style.color = "white";
 				document.querySelectorAll('.page').forEach((page)=>{
 				if(page.id !== name){
 
 					page.style.display = "none";
 				}else{
+					document.getElementById("page-title").innerHTML=name;
 					page.style.display = "inline-block";
+
 				}
 				});
 			}else{	
-				tab.style.color = "black";
+				tab.style.color = "#576574";
 				tab.style.backgroundColor = "transparent";			
 			}
 		});
@@ -372,7 +377,7 @@
 			};
 			tab.append(tr);
 		});
-		document.querySelector('#questions').append(tab);
+		document.querySelector('#questions').insertBefore(tab,document.querySelector('#questions').childNodes[4]);
 		document.querySelectorAll('.questions-table tr').forEach((tr)=>{
 			if(tr.innerHTML == "" || tr.innerHTML == null){
 				console.log(tr);
@@ -479,4 +484,5 @@
 
 
 </script>
+</body>
 </html>

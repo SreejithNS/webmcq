@@ -16,8 +16,11 @@ var log = (data,name,left) =>{
 }
 
 ////////////////////////////////////  FILE SUPPLIERS ///////////////////////////////////////////
+app.get('/favicon.ico', function(req, res) {
+   res.sendFile(__dirname+'/res/ico/logo.ico');
+});
 
-
+//app.use('/favicon.ico', express.static(__dirname + '/public/www/'));
 app.get('/socket.io/socket.io.js', function(req, res) {
    res.sendFile(__dirname+'/socket.io/socket.io.js');
 });
@@ -70,14 +73,7 @@ io.on('connection', function(socket) {
 
   	socket.on("report",(data)=>{
   		qdb.qset.emit('rep',data);
-  		qdb.qset.on('rep_suc');//,()=> console.log("Report was success for "+data.nam));
-
-  		qdb.requestReports(qcode+"_report"); // reqesting database for report data 
-  		qdb.qset.on('report_data',(data)=>{ // when report data is received from the database
-  			//console.log("Report reload received: ",data);
-  			server.emit('report_data',data); // sending the reports to teacher by emiting ('report_data')
-  		});
-
+  		qdb.requestReports(qcode); 
   	});
 
   	socket.on("disconnect",()=>{
@@ -87,6 +83,10 @@ io.on('connection', function(socket) {
       	//console.log(list);
         server.emit('logged',list);
   	});
+
+    qdb.qset.on('report_data',(data)=>{ 
+        server.emit('report_data',data); 
+    });
 
 });
 
@@ -128,17 +128,13 @@ server.on('connection',function(socket){
     //console.log("insert_questions received"+data);
     qdb.editQuestion(data,qcode);
   });
-       qdb.qset.on('questions_data',(data)=>{
-        socket.emit('questions_data',data);
-      });
+ qdb.qset.on('questions_data',(data)=>{
+    socket.emit('questions_data',data);
+  });
 
 	socket.on('start',function(){
 		qdb.qset.emit('req',qcode);
-        qdb.qset.on('res',(d)=>{
-            var qu = shuffle(d);
-        		io.of('/').emit('trigger',qu);
-        	});
-        });
+  });
 
 	socket.on('rep_cc',function(){
 		//console.log("rep_cc");
