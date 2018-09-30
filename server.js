@@ -2,6 +2,7 @@
 //////////////////////////////////// Server.js ///////////////////////////////////
 
 var app = require('express')();
+var express = require('express');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var ip = require("ip");
@@ -20,7 +21,8 @@ app.get('/favicon.ico', function(req, res) {
    res.sendFile(__dirname+'/res/ico/logo.ico');
 });
 
-//app.use('/favicon.ico', express.static(__dirname + '/public/www/'));
+app.use('/teacher', express.static(__dirname + '/admin/'));
+
 app.get('/socket.io/socket.io.js', function(req, res) {
    res.sendFile(__dirname+'/socket.io/socket.io.js');
 });

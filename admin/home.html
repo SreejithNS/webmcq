@@ -8,6 +8,7 @@
 	<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
 	<script type="text/javascript" src="/tjs"></script>
 	<link rel="stylesheet" type="text/css" href="/tcss">
+	<script defer src="./js/all.js"></script>
 	<link rel="icon" href="/favicon.ico">
 	
 </head>
@@ -15,9 +16,12 @@
 	<div class="left">
 		<div class="logo"><img class="logo-img" src="/favicon.ico"><label class="logo-label">Web MCQ</label></div>
 		<div class="tab" id="page-online" onclick="toggle(this.id)"><div class="left-dot">►</div>Control Center</div>
-		<div class="tab" id="page-reports" onclick="toggle(this.id)"><div class="left-dot">►</div>Report</div>
-		<div class="tab" id="page-questions" onclick="toggle(this.id);socket.emit('questions_pull')"><div class="left-dot">►</div>Questions</div>
+		<div class="tab" id="page-reports" onclick="toggle(this.id)"><div class="left-dot"><i class="fas fa-receipt"></i></div>Report</div>
+		<div class="tab" id="page-questions" onclick="toggle(this.id);socket.emit('questions_pull')"><div class="left-dot"><i class="fas fa-tasks"></i></div>Questions</div>
+		<div class="top-bottom">
+			<label class="copyright">CREATED BY <b>SREEJITH N <b>| TealDuck</label>
 
+		</div>
 	</div>
 	
 	<div class="right">
@@ -32,10 +36,10 @@
 			<br>
 			<div class="online-control-panel">
 				<div class="control-panel-label">Action</div>
-				<input type="button" id="start-but" class="but ripple-effect" value="START">
+				<button id="start-but" class="but ripple-effect"><i class="far fa-play-circle"></i> Star Exam</button>
 			</div>
 			<br>
-			<table class="online-table"><td class="temp-tr">Content yet to be recieved.</td></table>
+			<table class="online-table"><td class="temp-tr">Content yet to be recieved</td></table>
 		</div>
 		<div class="page" id="reports">
 			<!---div class="page-title">
@@ -43,7 +47,7 @@
 			</div--><br>
 			<div class="online-control-panel">
 				<div class="control-panel-label">Control Panel</div>
-				<input type="button" id="reload-but" class="but ripple-effect" value="RELOAD" onclick="rep_cc()">
+				<button id="reload-but" class="but ripple-effect" onclick="rep_cc()"><i class="fas fa-sync-alt"></i> Reload</button>
 			</div>
 			<br>
 			<table class="report-table"><td class="temp-tr">Content yet to be recieved.</td></table>
@@ -54,14 +58,14 @@
 			</div--><br>
 			<div class="black-box mild-grey">
 				<div>
-					Question Paper:<span class="matte-black i b" id="questions-id">12sqset1</span>
-					Author:<span class="matte-black i b" id="questions-author">Sreejith N</span>
+					<i class="fas fa-receipt"></i>| <span class="matte-black i b" id="questions-id">12sqset1</span><i class="fas fa-angle-right marginlr"></i>
+					<i class="fas fa-user"></i> <span class="matte-black i b" id="questions-author">Sreejith N</span>
 				</div>
 					
 			</div>
 			<div class="online-control-panel">
 				<div class="control-panel-label">Actions</div>
-				<input type="button" class="but ripple-effect" value="INSERT" onclick="insertQuestion()">
+				<button class="but ripple-effect" onclick="insertQuestion()"><i class="fas fa-plus-circle"></i> Add</button>
 			</div>
 			
 			<table class="questions-table">
