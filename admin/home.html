@@ -9,6 +9,7 @@
 	<script type="text/javascript" src="/tjs"></script>
 	<link rel="stylesheet" type="text/css" href="/tcss">
 	<script defer src="./js/all.js"></script>
+	<script type="text/javascript" src="./js/jquery.js"></script>
 	<link rel="icon" href="/favicon.ico">
 	
 </head>
@@ -18,8 +19,10 @@
 		<div class="tab" id="page-online" onclick="toggle(this.id)"><div class="left-dot">►</div>Control Center</div>
 		<div class="tab" id="page-reports" onclick="toggle(this.id)"><div class="left-dot"><i class="fas fa-receipt"></i></div>Report</div>
 		<div class="tab" id="page-questions" onclick="toggle(this.id);socket.emit('questions_pull')"><div class="left-dot"><i class="fas fa-tasks"></i></div>Questions</div>
+		<div class="tab" id="page-questions-manager" onclick="toggle(this.id)"><div class="left-dot"><i class="fas fa-newspaper"></i></div>Questions Manager</div>
+		<div class="tab" id="page-user-accounts" onclick="toggle(this.id)"><div class="left-dot"><i class="fas fa-user"></i></div>User Accounts</div>
 		<div class="top-bottom">
-			<label class="copyright">CREATED BY <b>SREEJITH N <b>| TealDuck</label>
+			<label class="copyright">CREATED BY <b>SREEJITH N <b>| TEAL DUCK</label>
 
 		</div>
 	</div>
@@ -34,23 +37,23 @@
 		<div class="page" id="online">
 		<!---div class="page-title"><label class="online-table-label"><div class="dot"></div>LOGGED STUDENTS</label></div-->
 			<br>
-			<div class="online-control-panel">
+			<div class="control-panel">
 				<div class="control-panel-label">Action</div>
-				<button id="start-but" class="but ripple-effect"><i class="far fa-play-circle"></i> Star Exam</button>
+				<button id="start-but" class="but ripple-effect" id="start-but"><i class="far fa-play-circle"></i> Start Exam</button>
 			</div>
 			<br>
-			<table class="online-table"><td class="temp-tr">Content yet to be recieved</td></table>
+			<table class="online-table"><td class="temp-tr">No Students Logged In yet.</td></table>
 		</div>
 		<div class="page" id="reports">
 			<!---div class="page-title">
 				<label class="online-table-label">Students Report</label>
 			</div--><br>
-			<div class="online-control-panel">
+			<div class="control-panel">
 				<div class="control-panel-label">Control Panel</div>
 				<button id="reload-but" class="but ripple-effect" onclick="rep_cc()"><i class="fas fa-sync-alt"></i> Reload</button>
 			</div>
 			<br>
-			<table class="report-table"><td class="temp-tr">Content yet to be recieved.</td></table>
+			<table class="report-table"><td class="temp-tr">No Students submitted the report.</td></table>
 		</div>
 		<div class="page" id="questions">
 			<!--div class="page-title">
@@ -63,7 +66,7 @@
 				</div>
 					
 			</div>
-			<div class="online-control-panel">
+			<div class="control-panel">
 				<div class="control-panel-label">Actions</div>
 				<button class="but ripple-effect" onclick="insertQuestion()"><i class="fas fa-plus-circle"></i> Add</button>
 			</div>
@@ -75,12 +78,85 @@
 				</tr>
 			</table><br>
 		</div>
+		<div class="page" id="questions-manager">
+			<!--div class="page-title">
+				<label class="online-table-label">Questions</label>
+			</div--><br>
+			<div class="control-panel">
+				<div class="control-panel-label">Actions</div>
+				<button id="reload-but" class="but ripple-effect" onclick="$('#crqp-page').slideToggle();"><i class="fas fa-plus-circle"></i> Create</button>
+			</div>
+			<div class="black-box mild-grey">
+				<div>
+					<i class="fas fa-user"></i> <span class="matte-black i b" id="questions-author">Sreejith N</span>
+				</div>
+			</div>
+			<div class="sub-page" id="crqp-page">
+				<div class="black-box sub-black-box sub-mg">
+					<i class="fas fa-user"></i> <span class="matte-black i b" id="questions-author">Sreejith N</span><i class="fas fa-angle-right marginlr"></i><i class="fas fa-receipt"></i>
+						<input type="text" id="cr-qcode" class="matte-black i b trans-input" placeholder="Question Code">
+						<i class="fas fa-angle-right marginlr"></i><i class="far fa-sticky-note"></i>
+						<input type="text" id="cr-sub" class="matte-black i b trans-input" placeholder="Subject">
+						<i class="fas fa-angle-right marginlr"></i><i class="fas fa-graduation-cap"></i>
+						<input type="number" id="cr-class" class="matte-black b trans-input" placeholder="Class">
+						
+				</div><br>
+
+				<div class="sub-page-group ">
+					Actions: <button class="ctrl-but" onclick="crQp.add()"><i class="fas fa-plus-circle"></i> Add Field</button> <button class="ctrl-but" onclick="crQp.delete()"><i class="fas fa-minus-circle"></i> Delete Field</button> <button class="ctrl-but" onclick="$('#crqp-page').slideToggle();"><i class="fas fa-times-circle"></i> Close</button>
+				</div>
+				<div class="sub-page-group">
+					<table id="crqp" class="table">
+						<tr>
+							<th>Serial No.</th>
+							<th>Question</th>
+							<th>OPT 1</th>
+							<th>OPT 2</th>
+							<th>OPT 3</th>
+							<th>OPT 4</th>
+							<th>Right Option</th>
+						</tr>
+						<tr>
+							<td><span class="n1">1</span></td>
+							<td><textarea class="n1"></textarea></td>
+							<td><input type="text" class="n1"></td>
+							<td><input type="text" class="n1"></td>
+							<td><input type="text" class="n1"></td>
+							<td><input type="text" class="n1"></td>
+							<td><select class="n1">
+							  <option value="none" selected>Select Option</option>
+							  <option value="1">1</option>
+							  <option value="2">2</option>
+							  <option value="3">3</option>
+							  <option value="4">4</option>
+							</select></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<br>
+			
+		</div>
+		<div class="page" id="user-accounts">
+			<div class="black-box mild-grey">
+				<div>
+					<i class="fas fa-receipt"></i>| <span class="matte-black i b" id="questions-id">12sqset1</span><i class="fas fa-angle-right marginlr"></i>
+					<i class="fas fa-user"></i> <span class="matte-black i b" id="questions-author">Sreejith N</span>
+				</div>
+			</div>
+			<div class="control-panel">
+				<div class="control-panel-label">Actions</div>
+				<button class="but ripple-effect" id="add-user-but"><i class="fas fa-plus-circle"></i> Add User</button>
+			</div>
+			<br>
+			
+		</div>
 		
 	</div>
 	<div class="modal" id="settings-modal" style="display: none;">
 			<div class="modal-content">
 				<div class="content">
-				<div class="title">Settings</div><br>
+				<div class="title"><i class="fas fa-cog"></i> Settings</div><br>
 				<div class="grp">Question Paper Code:
 					<input type="text" class="input" id="settings-qset">
 				</div><br>
@@ -91,10 +167,42 @@
 					<input type="button" class="but ripple-effect settings-but" value="Save" onclick="saveSettings()">
 				</div>
 			</div>
-			</div></div>
+			</div>
+	</div>
+	<div class="modal" id="user-add-modal" style="display: none;">
+			<div class="modal-content">
+				<div class="content">
+				<div class="title"><i class="fas fa-user-circle"></i> New User</div><br>
+				<div class="grp">Username
+					<input type="text" class="input marginlr" id="cr-username">
+				</div>
+				<br>
+				<div class="grp">Password
+					<input type="password" class="input marginlr" id="cr-password">
+				</div>
+				<br>
+				<div class="grp">Full Name
+					<input type="text" class="input marginlr" id="cr-fullname">
+				</div>
+				<br>
+				<div class="grp">Account Type
+					<select id="cr-usertype">
+					  <option value="0" selected>Teacher</option>
+					  <option value="1">Admin</option>
+					  <option value="2">Supervisor</option>
+					</select>
+				</div>
+				<br>
+			<div class="grp align-right top-mg16">
+				<button class="but ripple-effect settings-but" id="cr-user-close">Close</button>
+				<button class="but ripple-effect settings-but" onclick="">Add</button>
+			</div>
+		  </div>
+		</div>
+	</div>
 	<div class="modal" id="insert-question" style="display: none;">
 				<div class="modal-content" style="min-width: 30%;">
-					<div class="title">Insert a question</div><br>
+					<div class="title"><i class="fas fa-plus-circle"></i> Insert a question</div><br>
 					<div class="grp">
 					Type in your Question<br>
 					<textarea id="insert-question-text" class="input mg16"></textarea></div><br>
@@ -120,7 +228,7 @@
 				</div></div>
 	<div class="modal" id="edit-question" style="display: none;">
 				<div class="modal-content" style="min-width: 30%;">
-					<div class="title">Edit Question - <b><i id="edit-question-no"></i></b></div><br>
+					<div class="title"><i class="fas fa-edit"></i> Edit Question - <b><i id="edit-question-no"></i></b></div><br>
 					<div class="grp">
 					Question<br>
 					<textarea id="edit-question-text" class="input mg16"></textarea></div><br>
@@ -146,347 +254,22 @@
 				</div>
 	</div>
 	<div id="toast-container"></div>
-	<script type="text/javascript">
-	var socket = io('/teacher');
-	var qset;
-	if(localStorage.getItem('qset') === null){
-		var temp = prompt("Enter the qset");
-		qset = temp;
-		socket.emit('qset',temp);
-		localStorage.setItem('qset',temp);
-		console.log("Not set "+temp);
-		loadSettings();
-	}else{
-		var temp = localStorage.getItem('qset');
-		qset = temp;
-		console.log("set "+qset);
-		socket.emit('qset',temp);
-		loadSettings();
-	}
-	function toggle(id){
-		var tabs = document.querySelectorAll(".tab");
+	<div class="login-screen">
+		<div class="login-screen-content">
+			<div><img class="ls-logo-img" src="/favicon.ico"><label class="ls-logo-label">Web MCQ</label></div><br>
+			<div>
+				<label style="color: #282828;position:relative;bottom:-10px;font-weight: 200">Please Enter you credentials</label>
+				<input type="text" id="ls-username" class="ls-input" placeholder="Username" required="">
+				<input type="password" id="ls-password" class="ls-input" placeholder="Password" required="" >
+				<button class="but ripple-effect" style="margin-bottom: 16px!important;" onclick="return true">Login <i class="fas fa-sign-in-alt"></i></button>
+			</div>
+			<br>
+			<div class="ls-box border">
+				<label style="font-size: 10px;color:#00000061;font-weight: 100;font-family: monospace;letter-spacing: 2px;">CREATED BY SREEJITH | TEAL DUCK</label>
+			</div>
 
-		tabs.forEach((tab)=>{
-			var name = tab.id.split('');
-				name.splice(0,5);
-				name = name.join('');
-
-			if(tab.id == id){
-				tab.style.backgroundColor = "#34495e";
-				tab.style.color = "white";
-				document.querySelectorAll('.page').forEach((page)=>{
-				if(page.id !== name){
-
-					page.style.display = "none";
-				}else{
-					document.getElementById("page-title").innerHTML=name;
-					page.style.display = "inline-block";
-
-				}
-				});
-			}else{	
-				tab.style.color = "#576574";
-				tab.style.backgroundColor = "transparent";			
-			}
-		});
-	}
-
-	toggle("page-online");
-
-	document.querySelector('#start-but').onclick = ()=>{
-		socket.emit('start');
-	};
-
-	function rep_cc(){
-		socket.emit('rep_cc');
-	}
-
-	var insertQuestionModal = false;
-	
-
-	function loadSettings(){
-		document.getElementById('settings-qset').value = qset;
-	}
-
-	function saveSettings(){
-		var code = document.getElementById('settings-qset').value;
-		qset = code;
-
-		localStorage.setItem('qset',code);
-		socket.emit('qset',code);
-		document.getElementById('settings-modal').style.display = 'none';
-		socket.emit("questions_pull");
-	}
-
-
-
-	function insertQuestion(){
-		document.getElementById("insert-question-text").value = "";
-		document.getElementById("opt-1").value = "";
-		document.getElementById("opt-2").value = "";
-		document.getElementById("opt-3").value = "";
-		document.getElementById("opt-4").value = "";
-		document.getElementById("right-opt").selectedIndex  = 0;
-		if(!insertQuestionModal){
-		document.querySelector("#insert-question").style.display = "inline-block";
-		insertQuestionModal = true;
-		}else{
-			document.querySelector("#insert-question").style.display = "none";
-			insertQuestionModal = false;
-		}
-	}
-	var editQuestionModal = false;
-
-	function editQuestion(id){
-		var q = {};
-		questions.forEach((question)=>{
-			if(question.qno == id){
-			 	q = question;
-			}
-		});
-		document.getElementById("edit-question-no").innerHTML = id;
-		document.getElementById("edit-question-text").value = q.quest;
-		document.getElementById("edit-opt-1").value = q.opt1;
-		document.getElementById("edit-opt-2").value = q.opt2;
-		document.getElementById("edit-opt-3").value = q.opt3;
-		document.getElementById("edit-opt-4").value = q.opt4;
-		document.getElementById("edit-right-opt").selectedIndex  = q.ans;
-		if(!editQuestionModal){
-		document.querySelector("#edit-question").style.display = "inline-block";
-		editQuestionModal = true;
-		}else{
-			document.querySelector("#edit-question").style.display = "none";
-			editQuestionModal = false;
-		}
-	}
-	function edit(){
-		let qno = parseInt(document.getElementById("edit-question-no").innerHTML);
-		let quest = document.getElementById("edit-question-text").value;
-		let opt1 = document.getElementById("edit-opt-1").value;
-		let opt2 = document.getElementById("edit-opt-2").value;
-		let opt3 = document.getElementById("edit-opt-3").value;
-		let opt4 = document.getElementById("edit-opt-4").value;
-		let ans = document.getElementById("edit-right-opt").selectedIndex;
-
-		var data = {
-			qno : qno,
-			quest : quest,
-			opt1 : opt1,
-			opt2 : opt2,
-			opt3 : opt3,
-			opt4 : opt4,
-			ans : ans
-		}
-
-		let send_data = JSON.stringify(data);
-
-		socket.emit('edit_questions',send_data);
-
-		if(!editQuestionModal){
-		document.querySelector("#edit-question").style.display = "inline-block";
-		editQuestionModal = true;
-		}else{
-			document.querySelector("#edit-question").style.display = "none";
-			editQuestionModal = false;
-		}
-	}
-
-	function insert(){
-		var question = document.getElementById("insert-question-text").value;
-		var opt1 = document.getElementById("opt-1").value;
-		var opt2 = document.getElementById("opt-2").value;
-		var opt3 = document.getElementById("opt-3").value;
-		var opt4 = document.getElementById("opt-4").value;
-		var ans = document.getElementById("right-opt").selectedIndex;
-		if(ans == 0){
-			return alert('Please Select the Right answer!')
-		}
-
-		var data = {
-			quest : question,
-			opt1 : opt1,
-			opt2 : opt2,
-			opt3 : opt3,
-			opt4 : opt4,
-			ans : ans
-		}
-
-		let send_data = JSON.stringify(data);
-
-		socket.emit('insert_questions',send_data);
-		insertQuestion();
-		document.getElementById("insert-question-text").value = "";
-		document.getElementById("opt-1").value = "";
-		document.getElementById("opt-2").value = "";
-		document.getElementById("opt-3").value = "";
-		document.getElementById("opt-4").value = "";
-		document.getElementById("right-opt").selectedIndex  = 0;
-	}
-	var questions;
-	socket.on('questions_data',(rdata)=>{
-
-		toast("Questions Data Reloaded");
-		var data = JSON.parse(rdata);
-		questions = data;
-		console.log("Reports data received from server : ", data);
-
-		var present = document.querySelector(".questions-table");
-		if(present !== null) present.parentNode.removeChild(present);
-
-		var tab = document.createElement('table');
-		tab.className = "questions-table";
-
-		var tr = document.createElement('tr');
-		var th1 = document.createElement('th');
-		var th2 = document.createElement('th');
-		var th3 = document.createElement('th');
-		var th4 = document.createElement('th');
-		var th5 = document.createElement('th');
-		var th6 = document.createElement('th');
-		var th7 = document.createElement('th');
-
-		th1.innerHTML = "Qst No.";
-		tr.appendChild(th1);
-		th2.innerHTML = "Question";
-		tr.appendChild(th2);
-		th3.innerHTML = "Option 1";
-		tr.appendChild(th3);
-		th4.innerHTML = "Option 2";
-		tr.appendChild(th4);
-		th5.innerHTML = "Option 3";
-		tr.appendChild(th5);
-		th6.innerHTML = "Option 4";
-		tr.appendChild(th6);
-		th7.innerHTML = "Answer";
-		tr.appendChild(th7);
-
-		tab.append(tr);
-		var i=0;
-		data.forEach((da)=>{
-			var tr = document.createElement('tr');
-			i++;
-			for(var d in da){
-				var td = document.createElement('td');
-				if(d == "qno"){
-				td.innerHTML = i;
-				td.id = "qno"+da[d];
-				td.className = "qno"
-				var no = parseInt(da[d]);
-				td.addEventListener("contextmenu", (e)=>{e.preventDefault();editQuestion(no)});
-				tr.append(td);
-				}else{
-				td.innerHTML = da[d];
-				tr.append(td);
-				}
-			};
-			tab.append(tr);
-		});
-		document.querySelector('#questions').insertBefore(tab,document.querySelector('#questions').childNodes[4]);
-		document.querySelectorAll('.questions-table tr').forEach((tr)=>{
-			if(tr.innerHTML == "" || tr.innerHTML == null){
-				console.log(tr);
-				tr.remove();
-			}
-		});
-	});
-
-	socket.on('report_data',function(rdata){
-		toast('Reports Updated');
-		let data = JSON.parse(rdata);
-		console.log("Reports data received from server : ", data);
-
-		var present = document.querySelector(".report-table");
-		if(present !== null) present.parentNode.removeChild(present); 
-
-		var tab = document.createElement('table');
-		tab.className = "report-table";
-
-		var tr = document.createElement('tr');
-		var th1 = document.createElement('th');
-		var th2 = document.createElement('th');
-		var th3 = document.createElement('th');
-		var th4 = document.createElement('th');
-		var th5 = document.createElement('th');
-		var th6 = document.createElement('th');
-
-		th1.innerHTML = "Roll No.";
-		tr.appendChild(th1);
-		th2.innerHTML = "Name";
-		tr.appendChild(th2);
-		th3.innerHTML = "System";
-		tr.appendChild(th3);
-		th4.innerHTML = "Mistakn Questions";
-		tr.appendChild(th4);
-		th5.innerHTML = "Total Mistakes";
-		tr.appendChild(th5);
-		th6.innerHTML = "Scored Marks";
-		tr.appendChild(th6);
-
-		tab.append(tr);
-
-		data.forEach((da)=>{
-			var tr = document.createElement('tr');
-			for(var d in da){
-				var td = document.createElement('td');
-				td.innerHTML = da[d];
-				tr.append(td);
-			};
-			tab.append(tr);
-		});
-		document.querySelector('#reports').append(tab);
-		document.querySelectorAll('.report-table tr').forEach((tr)=>{
-			if(tr.innerHTML == "" || tr.innerHTML == null){
-				console.log(tr);
-				tr.remove();
-			}
-		});
-
-	});
-
-	socket.on('logged',(logdata)=>{
-		toast('New Student logged');
-		var present = document.querySelector(".online-table");
-		if(present !== null) present.parentNode.removeChild(present); 
-		
-		var tab = document.createElement('table');
-		tab.className = "online-table";
-		var tr = document.createElement('tr');
-		var th1 = document.createElement('th');
-		var th2 = document.createElement('th');
-		var th3 = document.createElement('th');
-		th1.innerHTML = "System"
-		tr.append(th1);
-		th2.innerHTML = "Name";
-		tr.append(th2);
-		th3.innerHTML = "Roll No.";
-		tr.append(th3);
-		tab.append(tr);
-
-		logdata.forEach((id)=>{
-			if(id !== {}) {
-			var tr = document.createElement('tr');
-				for (var d in id){
-				var td = document.createElement('td');
-				td.innerHTML = id[d];
-				tr.append(td);
-				};
-			tab.append(tr);
-			};
-			
-		});
-		document.querySelector('#online').append(tab);
-		document.querySelectorAll('.online-table tr').forEach((tr)=>{
-			if(tr.innerHTML == "" || tr.innerHTML == null){
-				console.log(tr);
-				tr.remove();
-			}
-		});
-		
-	});
-
-
-
-
-</script>
+		</div>
+	</div>
+	<script type="text/javascript" src="js/index.js"></script>
 </body>
 </html>

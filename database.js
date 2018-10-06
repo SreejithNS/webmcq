@@ -100,20 +100,71 @@ exports.editQuestion = function(rdata,table){
 };
 
 
-exports.qcode = (data) =>{
-	var sql = "CREATE TABLE IF NOT EXISTS '"+ data +"' ( qno INTEGER PRIMARY KEY AUTOINCREMENT, quest TEXT, opt1 TEXT, opt2 TEXT, opt3 TEXT, opt4 TEXT, ans integer )";
+exports.qcode = (name,author,subject,clas) =>{
+
+	var sql = "CREATE TABLE IF NOT EXISTS '"+ name +"' ( qno INTEGER PRIMARY KEY AUTOINCREMENT, quest TEXT, opt1 TEXT, opt2 TEXT, opt3 TEXT, opt4 TEXT, ans integer )";
 	db.run(sql,[],(err)=>{
 		if(err) console.log(err);
 		return
 	});
 	
-	sql = "CREATE TABLE IF NOT EXISTS'"+ data +"_report' ( roll INTEGER PRIMARY KEY, name text, sys integer, mistakes text, totalmistakes integer, total integer )";
+	sql = "CREATE TABLE IF NOT EXISTS'"+ name +"_report' ( roll INTEGER PRIMARY KEY, name text, sys integer, mistakes text, totalmistakes integer, total integer )";
 	db.run(sql,[],(err)=>{
 		if(err) console.log(err);
 		return
 	});
+
+	if(author|| subject || clas){
+	sql = `INSERT INTO 'questions' ('qcode','author','subject','class') VALUES (${qcode},${author},${subject},${clas})`;
+
+	db.run(sql,[],(err)=>{
+		if(err) console.log(err);
+		return
+	});
+	exports.listQpapers();
+	}
 };
 
+//////////////////// QUESTIONS MANAGER ///////////////////
 
-//
-// close the database connection
+exports.listQpapers = ()=>{
+	let sql = "SELECT * FROM 'questions'";
+
+	db.all(sql, [], (err,res) => {
+  	if (err) {
+    return console.error(err.message);
+  	}
+
+  	let data = JSON.stringify(res);
+  	exports.qset.emit('listQpapers',data);
+});
+}
+
+//////////////////////// USER ACCOUNTS ////////////////////
+
+exports.addUser = (uname,pass,fname,type)=>{
+	let sql = `INSERT INTO 'users' ('username','password','fullname','type') VALUES (${uname},${pass},${fname},${parseInt(type)})`;
+
+	db.run(sql,[],(err)=>{
+		if(err) console.log(err);
+		return
+	});
+
+	exports.listUsers();
+};
+
+exports.listUsers = ()=>{
+	
+	let sql = `SELECT * FROM 'users'`;
+
+	db.all(sql, [], (err,res) => {
+	  	if (err) {
+	    	return console.error(err.message);
+	  	}
+
+	  	let data = JSON.stringify(res);
+		exports.qset.emit('listUsers',data);
+	});
+}
+
+

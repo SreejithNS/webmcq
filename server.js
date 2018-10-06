@@ -120,7 +120,9 @@ server.on('connection',function(socket){
     qcode = code;
     qdb.qcode(code);
   });
-
+  socket.on('disconnect',()=>{
+    socket == undefined;
+  });
   socket.on('insert_questions',(data)=>{
     //console.log("insert_questions received"+data);
     qdb.insertQuestion(data,qcode);
@@ -137,6 +139,7 @@ server.on('connection',function(socket){
 	socket.on('start',function(){
 		qdb.qset.emit('req',qcode);
   });
+
 
 	socket.on('rep_cc',function(){
 		//console.log("rep_cc");
@@ -157,12 +160,23 @@ server.on('connection',function(socket){
   			//console.log("Questions Data received");
   			socket.emit('questions_data',data);
   		});*/
-
 	});
-
-     
-
+     /* QUESTIONS MANAGER */
+    socket.on('listqp',()=>{console.log("listqp req");qdb.listQpapers()});
+    socket.on('createqp',(data)=>qdb.qcode(data.qcode,data.author,data.subject));
+    qdb.qset.on('listQpapers',(data)=>{
+      socket.emit('listQpapers',data);
+    });
+    /////// USER ACCOUTNS ////
+    socket.on('listUsers',()=>qdb.listUsers());
+    qdb.qset.on('listUsers',(data)=>{
+      socket.emit('userslist',data);
+    });
 });
+ qdb.qset.on('res',(d)=>{
+            var qu = shuffle(d);
+            io.of('/').emit('trigger',qu);
+          });
 
 
 

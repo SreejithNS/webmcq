@@ -210,6 +210,7 @@ div{
  .q-group{
  	margin-bottom: 10px;
  	max-width: 95%;
+ 	display: block;
  }
 .opt-group{
 	//transform: translate(-30%);
